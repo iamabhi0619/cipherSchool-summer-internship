@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+form {
+    margin: 20px 0;
+}
+
+input,
+button {
+    padding: 8px;
+    margin: 5px 0;
+}
+
+img {
+    max-width: 20%;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    body {
+        margin: 10px;
+        font-size: 14px;
+    }
+
+    input,
+    button {
+        padding: 10px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        margin: 5px;
+        font-size: 12px;
+    }
+
+    input,
+    button {
+        width: 100%;
+    }
+}

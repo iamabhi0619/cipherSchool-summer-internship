@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 
 const AllStudents = () => {
@@ -18,7 +18,7 @@ const AllStudents = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/admin/students", {
+      const res = await api.get(`/students`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -48,7 +48,7 @@ const AllStudents = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/admin/students/${id}`, {
+      await api.delete(`/students/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 
 const ManageBooks = () => {
   const [books, setBooks] = useState([]);
@@ -17,7 +17,7 @@ const ManageBooks = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/books");
+  const response = await api.get("/books");
       setBooks(response.data);
     } catch (error) {
       console.error("Error fetching books:", error);
@@ -37,7 +37,7 @@ const ManageBooks = () => {
     if (editId) {
       // Update existing book
       try {
-        await axios.put(`http://localhost:5000/api/books/${editId}`, {
+        await api.put(`/books/${editId}`, {
           title,
           author,
         });
@@ -55,7 +55,7 @@ const ManageBooks = () => {
     } else {
       // Add new book
       try {
-        const response = await axios.post("http://localhost:5000/api/books", {
+        const response = await api.post("/books", {
           title,
           author,
         });
@@ -81,7 +81,7 @@ const ManageBooks = () => {
     const token = localStorage.getItem("token");
   
     try {
-      await axios.delete(`http://localhost:5000/api/books/${id}`, {
+      await api.delete(`/books/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

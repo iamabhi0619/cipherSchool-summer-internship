@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import api from "../api";
 
 const StudentProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -12,18 +13,13 @@ const StudentProfile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/student/profile", {
+        const res = await api.get("/student/profile", {
           headers: { Authorization: `Bearer ${token}` }
         });
-        const data = await res.json();
-        if (res.ok) {
-          setProfile(data);
-          setForm({ name: data.name, department: data.department });
-        } else {
-          setError(data.message || "Failed to load profile");
-        }
+        setProfile(res.data);
+        setForm({ name: res.data.name, department: res.data.department });
       } catch (err) {
-        setError("Failed to load profile");
+        setError(err.response?.data?.message || "Failed to load profile");
       }
     };
     fetchProfile();
@@ -39,24 +35,16 @@ const StudentProfile = () => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/student/profile", {
-        method: "PUT",
+      const res = await api.put("/student/profile", form, {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
+        }
       });
-      const data = await res.json();
-      if (res.ok) {
-        setProfile(data.student);
-        setMessage("Profile updated successfully!");
-        setEdit(false);
-      } else {
-        setError(data.message || "Failed to update profile");
-      }
+      setProfile(res.data.student);
+      setMessage("Profile updated successfully!");
+      setEdit(false);
     } catch (err) {
-      setError("Failed to update profile");
+      setError(err.response?.data?.message || "Failed to update profile");
     }
   };
 

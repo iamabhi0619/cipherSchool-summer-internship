@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 const AddStudent = () => {
   const [student, setStudent] = useState({
@@ -15,13 +15,13 @@ const AddStudent = () => {
   const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
-  const API_BASE_URL = "http://localhost:5000/api/admin";
+  // API_BASE_URL is now managed in src/api.js
 
   const handleAddStudent = async (e) => {
     e.preventDefault();
     // console.log(student);
     try {
-      const res = await axios.post(`${API_BASE_URL}/students`, student, {
+      const res = await api.post(`/students`, student, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage(res.data.message);

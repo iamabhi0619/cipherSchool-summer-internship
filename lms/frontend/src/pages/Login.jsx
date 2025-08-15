@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import {jwtDecode} from "jwt-decode"; // Install using: npm install jwt-decode
+import api from "../api";
 
 const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
@@ -17,30 +18,11 @@ const Login = ({ setUser }) => {
       let res;
       
       // Try logging in as admin
-      res = await fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      if (!res.ok) {
-        // If admin login fails, try student login
-        res = await fetch("http://localhost:5000/api/student/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-      }
-  
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-  
-        // Decode JWT to get role
-        const userData = jwtDecode(data.token);
+      try {
+        const res = await api.post("/admin/login", { email, password });
+        localStorage.setItem("token", res.data.token);
+        const userData = jwtDecode(res.data.token);
         setUser(userData);
-  
-        // Redirect user based on role
         if (userData.role === "admin") {
           navigate("/admin");
         } else if (userData.role === "student") {
@@ -48,8 +30,23 @@ const Login = ({ setUser }) => {
         } else {
           setError("Invalid role");
         }
-      } else {
-        setError(data.message || "Invalid credentials");
+      } catch (adminErr) {
+        // If admin login fails, try student login
+        try {
+          const res = await api.post("/student/login", { email, password });
+          localStorage.setItem("token", res.data.token);
+          const userData = jwtDecode(res.data.token);
+          setUser(userData);
+          if (userData.role === "admin") {
+            navigate("/admin");
+          } else if (userData.role === "student") {
+            navigate("/student");
+          } else {
+            setError("Invalid role");
+          }
+        } catch (studentErr) {
+          setError(studentErr.response?.data?.message || "Invalid credentials");
+        }
       }
     } catch (err) {
       console.error(err);

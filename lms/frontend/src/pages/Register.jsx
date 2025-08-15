@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import api from "../api";
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -22,17 +23,11 @@ const Register = () => {
     setError("");
     setSuccess("");
     try {
-      const res = await fetch("http://localhost:5000/api/student/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Registration failed");
+      const res = await api.post("/student/register", form);
       setSuccess("Registration successful! Please login.");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || "Registration failed");
     }
   };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 
 const IssueBook = () => {
   const [departments] = useState(["EE", "ECE", "CSE", "CE", "ME", "MCA", "MBA"]);
@@ -12,13 +12,13 @@ const IssueBook = () => {
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
-  const API_BASE_URL = "http://localhost:5000/api/admin";
+  // API_BASE_URL is now managed in src/api.js
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/api/books");
+  const response = await api.get("/books");
         console.log("Books fetched:", response.data); // Debugging
         setBooks(response.data);
       } catch (error) {
@@ -33,7 +33,7 @@ const IssueBook = () => {
 
   const fetchStudents = async (department) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/students`, {
+      const res = await api.get(`/students`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const filteredStudents = res.data.filter((student) => student.department === department);
@@ -46,7 +46,7 @@ const IssueBook = () => {
   const handleIssueBook = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${API_BASE_URL}/issue`, issue, {
+      const res = await api.post(`/issue`, issue, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage(res.data.message);

@@ -1,6 +1,7 @@
 import Books from "./Books";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import api from "../api";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -10,14 +11,12 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/admin/stats", {
+        const res = await api.get("/admin/stats", {
           headers: { Authorization: `Bearer ${token}` }
         });
-        const data = await res.json();
-        if (res.ok) setStats(data);
-        else setError(data.message || "Failed to load stats");
+        setStats(res.data);
       } catch (err) {
-        setError("Failed to load stats");
+        setError(err.response?.data?.message || "Failed to load stats");
       }
     };
     fetchStats();

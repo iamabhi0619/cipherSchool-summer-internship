@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 const EditStudent = () => {
   const { id } = useParams(); // Get the student ID from URL params
@@ -20,8 +20,8 @@ const EditStudent = () => {
     const fetchStudent = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `http://localhost:5000/api/admin/students/${id}`,
+        const res = await api.get(
+          `/admin/students/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -58,8 +58,8 @@ const EditStudent = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put(
-        `http://localhost:5000/api/admin/students/${id}`,
+      const res = await api.put(
+        `/admin/students/${id}`,
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },

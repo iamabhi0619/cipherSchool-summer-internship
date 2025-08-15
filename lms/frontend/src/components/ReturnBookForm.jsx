@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 const IssueBook = () => {
   const [departments] = useState(["EE", "ECE", "CSE", "CE", "ME", "MCA", "MBA"]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -17,14 +17,14 @@ const IssueBook = () => {
   if (!token) {
     console.error("No token found. Please log in.");
   }
-  const API_BASE_URL = "http://localhost:5000/api";
+  // API_BASE_URL is now managed in src/api.js
 
   // Fetch all books from API
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/books`);
+  const response = await api.get(`/books`);
         setBooks(response.data);
       } catch (error) {
         console.error(error);
@@ -39,7 +39,7 @@ const IssueBook = () => {
   // Fetch students based on selected department
   const fetchStudents = async (department) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/admin/students`, {
+      const res = await api.get(`/admin/students`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const filteredStudents = res.data.filter((student) => student.department === department);
@@ -52,7 +52,7 @@ const IssueBook = () => {
   // Fetch borrowed books for the selected student
   const fetchBorrowedBooks = async (studentId) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/borrows/${studentId}`, {
+      const res = await api.get(`/borrows/${studentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBorrowedBooks(res.data.borrows);
@@ -95,7 +95,7 @@ const IssueBook = () => {
     }
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/admin/return`, { borrowId }, {
+      const res = await api.post(`/admin/return`, { borrowId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage(res.data.message);
